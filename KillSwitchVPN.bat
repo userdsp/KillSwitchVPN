@@ -7,11 +7,18 @@
 
 :: On Error No Admin
 if '%errorlevel%' NEQ '0' (
-    echo You need to Run this script as Administrator...
-    pause
-    exit;
-  
+    echo Getting administrative privileges...
+    goto DoUAC
 ) else ( goto getAdmin )
+
+:DoUAC
+    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
+    set params = %*:"=""
+    echo UAC.ShellExecute "cmd.exe", "/c %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs"
+
+    "%temp%\getadmin.vbs"
+    del "%temp%\getadmin.vbs"
+    exit /B
 
 :getAdmin
     pushd "%CD%"
